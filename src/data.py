@@ -48,7 +48,7 @@ def load_nsl_kdd_dataset(raw_dir: str | Path = "data/raw", train_file: str = "KD
 
 
 def to_attack_category(labels: Iterable[str]) -> pd.Series:
-    """Map raw attack names to NSL-KDD macro-categories: normal, dos, probe, r2l, u2r."""
+    """Map attack labels to NSL-KDD macro-categories; unknown labels are mapped to 'unknown'."""
     label_series = pd.Series(labels, dtype="string")
     return label_series.str.strip().str.lower().map(ATTACK_CATEGORY_MAP).fillna("unknown")
 

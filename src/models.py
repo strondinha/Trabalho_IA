@@ -132,5 +132,5 @@ def optional_smote(random_state: int = 42):
         from imblearn.over_sampling import SMOTE
 
         return SMOTE(random_state=random_state)
-    except Exception:
+    except ImportError:
         return None
