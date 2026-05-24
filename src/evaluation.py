@@ -34,12 +34,13 @@ def classification_metrics(y_true, y_pred, labels: list[str] | None = None) -> d
 
 
 def plot_confusion(cm: np.ndarray, labels: list[str], title: str = "Matriz de Confusão", figsize: tuple[int, int] = (8, 6)):
-    plt.figure(figsize=figsize)
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
-    plt.title(title)
-    plt.xlabel("Predito")
-    plt.ylabel("Real")
-    plt.tight_layout()
+    fig, ax = plt.subplots(figsize=figsize)
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels, ax=ax)
+    ax.set_title(title)
+    ax.set_xlabel("Predito")
+    ax.set_ylabel("Real")
+    fig.tight_layout()
+    return fig, ax
 
 
 def summarize_result(model_name: str, metrics: dict[str, Any], train_time: float, inference_time: float) -> dict[str, Any]:

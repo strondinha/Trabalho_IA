@@ -68,7 +68,7 @@ def build_svm_pipeline(categorical_cols: list[str], numeric_cols: list[str], ran
     )
 
 
-def rf_param_grid(random_state: int = 42) -> list[dict[str, Any]]:
+def rf_param_grid() -> list[dict[str, Any]]:
     return [
         {
             "selector": ["passthrough", SelectKBest(score_func=mutual_info_classif, k=20), SelectKBest(score_func=mutual_info_classif, k=40)],
