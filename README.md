@@ -47,11 +47,35 @@ Instale as dependências listadas em `requirements.txt`:
 pip install -r requirements.txt
 ```
 
+## Execução no Google Colab
+O Colab reinicia o ambiente a cada nova sessão (inclusive em outro computador).  
+Por isso, o notebook `notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb` agora inclui uma seção **Setup Colab** no topo para automatizar:
+
+- detecção de execução no Colab;
+- clone do repositório em `/content/Trabalho_IA` (se necessário);
+- instalação de dependências com `requirements.txt`;
+- configuração do caminho para os imports `from src...`.
+
+Abra diretamente no Colab:
+
+https://colab.research.google.com/github/strondinha/Trabalho_IA/blob/main/notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb
+
+Para o dataset, mantenha os arquivos em `data/raw/` dentro do projeto no Colab:
+
+- `KDDTrain+.txt`
+- `KDDTest+.txt`
+
+O notebook traz duas opções para isso:
+1. upload manual (`files.upload()`);
+2. cópia via Google Drive (`drive.mount()` + `copy`).
+
+> Observação: o dataset **não** deve ser versionado no Git.
+
 ## Como executar
 1. Coloque o dataset escolhido em `data/raw/`.
 2. Abra o notebook inicial:
    ```bash
-   jupyter notebook notebooks/01_exploracao_e_modelagem.ipynb
+   jupyter notebook notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb
    ```
 3. Siga as células para:
    - carregar os dados;
