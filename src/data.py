@@ -17,6 +17,7 @@ NSL_KDD_FEATURES = [
 ]
 
 NSL_KDD_COLUMNS = NSL_KDD_FEATURES + ["label", "difficulty"]
+NSL_KDD_COLUMNS_NO_DIFFICULTY = NSL_KDD_FEATURES + ["label"]
 
 ATTACK_CATEGORY_MAP = {
     "normal": "normal",
@@ -36,7 +37,38 @@ def load_nsl_kdd_file(file_path: str | Path) -> pd.DataFrame:
     file_path = Path(file_path)
     if not file_path.exists():
         raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
-    return pd.read_csv(file_path, names=NSL_KDD_COLUMNS)
+
+    df = pd.read_csv(
+        file_path,
+        sep=",",
+        header=None,
+        skipinitialspace=True,
+        skip_blank_lines=True,
+    ).dropna(how="all")
+
+    if df.shape[1] == 1:
+        raise ValueError(
+            f"Falha ao ler '{file_path}': apenas 1 coluna detectada. "
+            "Verifique se o arquivo está no formato NSL-KDD (separado por vírgulas)."
+        )
+
+    if df.shape[1] == len(NSL_KDD_COLUMNS):
+        df.columns = NSL_KDD_COLUMNS
+    elif df.shape[1] == len(NSL_KDD_COLUMNS_NO_DIFFICULTY):
+        df.columns = NSL_KDD_COLUMNS_NO_DIFFICULTY
+    else:
+        raise ValueError(
+            f"Formato inválido em '{file_path}': {df.shape[1]} colunas encontradas. "
+            f"Esperado {len(NSL_KDD_COLUMNS_NO_DIFFICULTY)} (41 features + label) "
+            f"ou {len(NSL_KDD_COLUMNS)} (com difficulty)."
+        )
+
+    object_cols = df.select_dtypes(include=["object", "string"]).columns
+    if len(object_cols) > 0:
+        df[object_cols] = df[object_cols].apply(lambda col: col.str.strip())
+
+    df["label"] = df["label"].astype(str).str.strip().str.rstrip(".")
+    return df
 
 
 def load_nsl_kdd_dataset(raw_dir: str | Path = "data/raw", train_file: str = "KDDTrain+.txt", test_file: str = "KDDTest+.txt") -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -61,7 +93,7 @@ def split_features_target(df: pd.DataFrame, target_mode: str = "category") -> tu
       - 'binary': normal vs attack
     """
     X = df[NSL_KDD_FEATURES].copy()
-    y_raw = df["label"].astype(str).str.strip().str.lower()
+    y_raw = df["label"].astype(str).str.strip().str.rstrip(".").str.lower()
 
     if target_mode == "raw":
         y = y_raw
