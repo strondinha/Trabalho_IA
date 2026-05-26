@@ -1,53 +1,67 @@
-# Trabalho_IA — Projeto 8 (NSL-KDD): Random Forest vs SVM
+# Projeto de Machine Learning para Cibersegurança
 
-Este repositório contém uma implementação completa do **Projeto 8: Classificação de Ataques de Rede com Random Forest e SVM**, com foco didático para apresentação.
+## Visão geral
+Este projeto tem como foco a **classificação de ataques de rede** em cenários de alta dimensionalidade, utilizando dados tabulares dos datasets **NSL-KDD** ou **CICIDS2017**. A proposta é comparar dois algoritmos clássicos de aprendizado supervisionado:
 
-## Estrutura
+- **Random Forest** (ênfase em interpretabilidade via importância de atributos)
+- **SVM (Support Vector Machine)** (ênfase na avaliação de diferentes kernels)
 
-- `notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb` — notebook principal (explicado e comentado)
-- `src/data.py` — carregamento e preparação do NSL-KDD
-- `src/models.py` — pipelines, modelos e grids de hiperparâmetros
-- `src/evaluation.py` — métricas, matriz de confusão e tempos
-- `data/raw/` — colocar os arquivos brutos do dataset aqui
-- `data/processed/` — espaço para dados processados
-- `reports/figures/` — figuras exportadas
+## Escopo acadêmico
+O trabalho foi estruturado para apoiar atividades de estudo e pesquisa em Inteligência Artificial aplicada à Segurança da Informação, cobrindo:
 
-## Dataset (NSL-KDD)
+1. Exploração inicial de dados de tráfego de rede.
+2. Pré-processamento para dados numéricos/categóricos e tratamento de alta dimensionalidade.
+3. Balanceamento de classes com técnicas como **SMOTE** ou ajuste de **class weights**.
+4. Treinamento e comparação inicial entre Random Forest e SVM.
+5. Avaliação por métricas de classificação multiclasse e análise de matriz de confusão.
+6. Medição de tempo de treinamento e inferência para análise de custo computacional.
 
-Dataset oficial: https://www.unb.ca/cic/datasets/nsl.html
+## Objetivos de aprendizado
+Ao utilizar este projeto, espera-se desenvolver:
 
-Baixe os arquivos e coloque em `data/raw/` com estes nomes:
+- Entendimento sobre o pipeline de Machine Learning em problemas de cibersegurança.
+- Capacidade de preparar dados tabulares de alta dimensionalidade.
+- Aplicação prática de redução/seleção de características.
+- Comparação técnica entre modelos baseados em árvores e margens máximas.
+- Interpretação de métricas por classe em cenários desbalanceados.
 
-- `KDDTrain+.txt`
-- `KDDTest+.txt`
+## Estrutura do projeto
 
-> O notebook lê diretamente esses arquivos de `data/raw/`.
+```text
+.
+├── data/
+│   ├── raw/                # Dados originais (não processados)
+│   └── processed/          # Dados após pré-processamento
+├── docs/                   # Documentação complementar
+├── notebooks/
+│   └── 01_exploracao_e_modelagem.ipynb
+├── src/                    # Código-fonte modular do projeto
+├── requirements.txt
+└── README.md
+```
 
-## Ambiente
+## Requisitos
+Instale as dependências listadas em `requirements.txt`:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
 pip install -r requirements.txt
 ```
 
-## Como rodar
+## Como executar
+1. Coloque o dataset escolhido em `data/raw/`.
+2. Abra o notebook inicial:
+   ```bash
+   jupyter notebook notebooks/01_exploracao_e_modelagem.ipynb
+   ```
+3. Siga as células para:
+   - carregar os dados;
+   - pré-processar e reduzir dimensionalidade;
+   - tratar desbalanceamento;
+   - treinar Random Forest e SVM;
+   - avaliar métricas e tempos.
 
-```bash
-jupyter notebook notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb
-```
-
-## O que é implementado
-
-- Comparativo entre **Random Forest** e **SVM**
-- Pré-processamento completo com `ColumnTransformer` + `Pipeline`
-  - Categóricas: imputação + one-hot
-  - Numéricas: imputação e padronização (para SVM)
-- Seleção de características com `SelectKBest(mutual_info_classif)` (comparada com `passthrough`)
-- Tratamento de desbalanceamento com `class_weight` e experimento opcional de SMOTE (fallback automático)
-- Busca de hiperparâmetros via `GridSearchCV`
-- Métricas exigidas:
-  - acurácia
-  - precisão/recall/F1 por classe
-  - matriz de confusão
-  - tempo de treinamento e inferência
+## Próximos passos sugeridos
+- Inserir validação cruzada estratificada.
+- Realizar ajuste de hiperparâmetros (GridSearch/RandomizedSearch).
+- Comparar desempenho em diferentes recortes de features.
+- Registrar experimentos para reprodutibilidade.
