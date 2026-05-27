@@ -32,24 +32,42 @@ ATTACK_CATEGORY_MAP = {
 }
 
 
+def _detect_separator(file_path: Path) -> str:
+    """Return the delimiter used in the file: '\\t' (TAB) or ',' (comma)."""
+    with open(file_path, "r", encoding="utf-8", errors="ignore") as fh:
+        first_line = fh.readline()
+    n_tabs = first_line.count("\t")
+    n_commas = first_line.count(",")
+    return "\t" if n_tabs > n_commas else ","
+
+
 def load_nsl_kdd_file(file_path: str | Path) -> pd.DataFrame:
-    """Load a NSL-KDD split file (KDDTrain+ or KDDTest+) from a CSV-like txt file."""
+    """Load a NSL-KDD split file (KDDTrain+ or KDDTest+).
+
+    Supports files separated by comma *or* TAB — the delimiter is detected
+    automatically from the first line, so no manual conversion is needed.
+    """
     file_path = Path(file_path)
     if not file_path.exists():
         raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
 
+    sep = _detect_separator(file_path)
+
     df = pd.read_csv(
         file_path,
-        sep=",",
+        sep=sep,
         header=None,
         skipinitialspace=True,
         skip_blank_lines=True,
+        engine="python",
     ).dropna(how="all")
 
     if df.shape[1] == 1:
+        other_sep = "," if sep == "\t" else "\t"
         raise ValueError(
-            f"Falha ao ler '{file_path}': apenas 1 coluna detectada. "
-            "Verifique se o arquivo está no formato NSL-KDD (separado por vírgulas)."
+            f"Falha ao ler '{file_path}': apenas 1 coluna detectada "
+            f"(separador detectado: {repr(sep)}, tentou-se também {repr(other_sep)}). "
+            "Verifique se o arquivo é o NSL-KDD original (separado por vírgula ou TAB)."
         )
 
     if df.shape[1] == len(NSL_KDD_COLUMNS):
