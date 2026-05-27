@@ -33,11 +33,20 @@ ATTACK_CATEGORY_MAP = {
 
 
 def _detect_separator(file_path: Path) -> str:
-    """Return the delimiter used in the file: '\\t' (TAB) or ',' (comma)."""
+    """Return the delimiter used in the file: '\\t' (TAB) or ',' (comma).
+
+    Raises ValueError when neither delimiter is found in the first line.
+    """
     with open(file_path, "r", encoding="utf-8", errors="ignore") as fh:
         first_line = fh.readline()
     n_tabs = first_line.count("\t")
     n_commas = first_line.count(",")
+    if n_tabs == 0 and n_commas == 0:
+        raise ValueError(
+            f"Não foi possível detectar o delimitador em '{file_path}'. "
+            "A primeira linha não contém TAB nem vírgula. "
+            "Verifique se o arquivo é o NSL-KDD original."
+        )
     return "\t" if n_tabs > n_commas else ","
 
 
@@ -63,10 +72,9 @@ def load_nsl_kdd_file(file_path: str | Path) -> pd.DataFrame:
     ).dropna(how="all")
 
     if df.shape[1] == 1:
-        other_sep = "," if sep == "\t" else "\t"
         raise ValueError(
             f"Falha ao ler '{file_path}': apenas 1 coluna detectada "
-            f"(separador detectado: {repr(sep)}, tentou-se também {repr(other_sep)}). "
+            f"(separador detectado: {repr(sep)}). "
             "Verifique se o arquivo é o NSL-KDD original (separado por vírgula ou TAB)."
         )
 
