@@ -69,6 +69,9 @@ O notebook traz duas opções para isso:
 1. upload manual (`files.upload()`);
 2. cópia via Google Drive (`drive.mount()` + `copy`).
 
+> **Delimitador**: o loader (`src/data.py`) detecta automaticamente se o arquivo usa **TAB** ou **vírgula** como separador — não é necessário converter os arquivos.  
+> Arquivos baixados do site oficial NSL-KDD (separados por vírgula) e arquivos no formato TSV (separados por TAB) são ambos suportados.
+
 > Observação: o dataset **não** deve ser versionado no Git.
 
 ## Como executar
