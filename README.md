@@ -36,6 +36,11 @@ Ao utilizar este projeto, espera-se desenvolver:
 ├── notebooks/
 │   └── 01_exploracao_e_modelagem.ipynb
 ├── src/                    # Código-fonte modular do projeto
+│   ├── config.py           # Configuração de execução (modo rápido/completo)
+│   ├── data.py             # Loader NSL-KDD + split e tipos de colunas
+│   ├── features.py         # Amostragem estratificada e top features do RF
+│   ├── models.py           # Pipelines RF/SVM e buscas de hiperparâmetros
+│   └── evaluation.py       # Métricas, matriz de confusão e tempos
 ├── requirements.txt
 └── README.md
 ```
@@ -86,6 +91,17 @@ O notebook traz duas opções para isso:
    - tratar desbalanceamento;
    - treinar Random Forest e SVM;
    - avaliar métricas e tempos.
+
+### Modos de execução no notebook principal
+No topo de `notebooks/Projeto8_AtaquesRede_RF_SVM.ipynb`, ajuste:
+
+- `MODE = "MODO_RAPIDO"` (padrão): validação rápida com amostragem estratificada e busca compacta.
+- `MODE = "MODO_COMPLETO"`: experimento para artigo com amostra maior e tuning controlado.
+- `SAMPLE_FRAC`: opcional (quando `None`, usa o padrão do modo).
+
+O notebook salva automaticamente em `reports/`:
+- `projeto8_summary.csv` (tabela final RF vs SVM com métricas e tempos)
+- `projeto8_rf_top_features.csv` (principais features do Random Forest)
 
 ## Próximos passos sugeridos
 - Inserir validação cruzada estratificada.
