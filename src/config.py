@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 
@@ -18,6 +18,11 @@ class ExperimentConfig:
 
 
 def get_experiment_config(mode: str = "MODO_RAPIDO", random_state: int = 42, sample_frac: float | None = None) -> ExperimentConfig:
+    """Return runtime configuration for Projeto 8 experiments.
+
+    `MODO_RAPIDO` is optimized for fast end-to-end validation.
+    `MODO_COMPLETO` uses larger sampling and broader searches for article runs.
+    """
     mode_key = mode.strip().upper()
     if mode_key not in {"MODO_RAPIDO", "MODO_COMPLETO"}:
         raise ValueError("mode deve ser 'MODO_RAPIDO' ou 'MODO_COMPLETO'.")
@@ -26,6 +31,7 @@ def get_experiment_config(mode: str = "MODO_RAPIDO", random_state: int = 42, sam
         default = ExperimentConfig(
             mode=mode_key,
             random_state=random_state,
+            # ~65% keeps representativeness while reducing runtime to fit ~1h on Colab.
             sample_frac=0.65,
             cv=3,
             rf_use_randomized=True,
@@ -38,6 +44,7 @@ def get_experiment_config(mode: str = "MODO_RAPIDO", random_state: int = 42, sam
         default = ExperimentConfig(
             mode=mode_key,
             random_state=random_state,
+            # ~20% accelerates end-to-end validation in a few minutes.
             sample_frac=0.20,
             cv=2,
             rf_use_randomized=True,
@@ -50,10 +57,18 @@ def get_experiment_config(mode: str = "MODO_RAPIDO", random_state: int = 42, sam
     chosen_frac = default.sample_frac if sample_frac is None else float(sample_frac)
     if not (0 < chosen_frac <= 1):
         raise ValueError("sample_frac deve estar no intervalo (0, 1].")
-    return ExperimentConfig(**{**default.__dict__, "sample_frac": chosen_frac})
+    return replace(default, sample_frac=chosen_frac)
 
 
 def ensure_project_dirs(root: str | Path) -> dict[str, Path]:
+    """Create and return the main project directories.
+
+    Args:
+        root: Project root path.
+
+    Returns:
+        Dict with Path values for keys: `raw_dir`, `reports_dir`, `figures_dir`.
+    """
     root = Path(root)
     paths = {
         "raw_dir": root / "data" / "raw",

@@ -101,7 +101,7 @@ def rf_param_grid_compact() -> list[dict[str, Any]]:
                 SelectKBest(score_func=mutual_info_classif, k=20),
                 SelectKBest(score_func=mutual_info_classif, k=40),
             ],
-            "classifier__n_estimators": [150, 250, 350],
+            "classifier__n_estimators": [80, 120, 180],
             "classifier__max_depth": [None, 20, 30],
             "classifier__min_samples_split": [2, 5],
             "classifier__class_weight": ["balanced", "balanced_subsample"],
@@ -119,7 +119,7 @@ def svm_param_grid_compact() -> list[dict[str, Any]]:
                 SelectKBest(score_func=mutual_info_classif, k=40),
             ],
             "classifier__kernel": ["linear", "rbf"],
-            "classifier__C": [0.5, 1.0, 2.0],
+            "classifier__C": [0.5, 1.0, 5.0],
             "classifier__gamma": ["scale", "auto"],
             "classifier__class_weight": ["balanced"],
         }
@@ -171,6 +171,12 @@ def build_experiment_estimators(
     rf_n_iter: int = 10,
     svm_n_iter: int = 8,
 ):
+    """Build runtime-aware RF/SVM estimators for notebook execution.
+
+    In `MODO_RAPIDO`, RF uses compact randomized search and SVM runs with a
+    single fit (no search). In `MODO_COMPLETO`, both RF and SVM run compact
+    randomized searches with controlled iteration limits.
+    """
     mode_key = mode.strip().upper()
     if mode_key not in {"MODO_RAPIDO", "MODO_COMPLETO"}:
         raise ValueError("mode deve ser 'MODO_RAPIDO' ou 'MODO_COMPLETO'.")
