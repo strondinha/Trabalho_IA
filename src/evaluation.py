@@ -45,9 +45,13 @@ def plot_confusion(cm: np.ndarray, labels: list[str], title: str = "Matriz de Co
 
 def summarize_result(model_name: str, metrics: dict[str, Any], train_time: float, inference_time: float) -> dict[str, Any]:
     weighted_f1 = metrics["classification_report"].get("weighted avg", {}).get("f1-score", np.nan)
+    weighted_precision = metrics["classification_report"].get("weighted avg", {}).get("precision", np.nan)
+    weighted_recall = metrics["classification_report"].get("weighted avg", {}).get("recall", np.nan)
     return {
         "model": model_name,
         "accuracy": metrics["accuracy"],
+        "precision_weighted": weighted_precision,
+        "recall_weighted": weighted_recall,
         "f1_weighted": weighted_f1,
         "train_time_s": train_time,
         "inference_time_s": inference_time,
